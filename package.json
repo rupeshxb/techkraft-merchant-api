@@ -1,7 +1,7 @@
 {
   "name": "techkraft-merchant-api",
   "version": "1.0.0",
-  "description": "Merchant Payments API",
+  "description": "Merchant Onboarding and Risk Assessment API",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {

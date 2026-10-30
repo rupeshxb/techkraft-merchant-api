@@ -17,7 +17,7 @@ async function bootstrap() {
   app.useGlobalFilters(new GlobalHttpExceptionFilter());
 
   const swaggerConfig = new DocumentBuilder()
-    .setTitle('Merchant Payments API')
+    .setTitle('Merchant Onboarding and Risk Assessment API')
     .setVersion('1.0')
     .addBearerAuth()
     .build();
