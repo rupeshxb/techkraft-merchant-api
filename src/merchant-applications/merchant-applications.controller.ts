@@ -64,6 +64,7 @@ export class MerchantApplicationsController {
   @UseGuards(ApplicationPolicyGuard)
   @ApiOperation({ summary: 'Get an application by id' })
   @ApiResponse({ status: 200, description: 'The application', type: MerchantApplication })
+  @ApiResponse({ status: 400, description: 'Invalid application id' })
   @ApiResponse({ status: 404, description: 'Application not found' })
   findOne(
     @Param('id', ParseUUIDPipe) id: string,
@@ -79,6 +80,7 @@ export class MerchantApplicationsController {
     summary: 'Update an application (only while PENDING or INFO_REQUESTED)',
   })
   @ApiResponse({ status: 200, description: 'Updated application', type: MerchantApplication })
+  @ApiResponse({ status: 400, description: 'Validation failed or invalid id' })
   @ApiResponse({ status: 404, description: 'Application not found' })
   @ApiResponse({ status: 422, description: 'Application status does not allow edits' })
   update(
@@ -94,14 +96,15 @@ export class MerchantApplicationsController {
   @Roles(Role.ADMIN)
   @ApiOperation({ summary: 'Assign a reviewer to an application' })
   @ApiResponse({ status: 200, description: 'Reviewer assigned', type: MerchantApplication })
-  @ApiResponse({ status: 400, description: 'User is not a REVIEWER' })
+  @ApiResponse({ status: 400, description: 'Validation failed, or user is not a REVIEWER' })
   @ApiResponse({ status: 404, description: 'Application or reviewer not found' })
   @ApiResponse({ status: 422, description: 'Application already decided' })
   assign(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: AssignReviewerDto,
+    @CurrentUser() user: AuthUser,
   ) {
-    return this.service.assignReviewer(id, dto);
+    return this.service.assignReviewer(id, dto, user);
   }
 
   @Post(':id/decision')
@@ -111,6 +114,7 @@ export class MerchantApplicationsController {
   @RequireAssignedReviewer(true)
   @ApiOperation({ summary: 'Record a review decision (assigned reviewer only)' })
   @ApiResponse({ status: 200, description: 'Decision recorded', type: MerchantApplication })
+  @ApiResponse({ status: 400, description: 'Validation failed or invalid id' })
   @ApiResponse({ status: 404, description: 'Application not found' })
   @ApiResponse({ status: 422, description: 'Invalid status transition' })
   decide(
